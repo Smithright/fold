@@ -1,0 +1,63 @@
+name: Verify and publish Fold
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fold-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '11.19.0'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - name: Check generated HTML is current
+        run: git diff --exit-code -- index.html
+      - run: pnpm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fold-browser-evidence
+          path: test-results/
+      - name: Prepare static publication
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          mkdir -p .site
+          cp index.html LICENSE .nojekyll .site/
+          node -e "const fs=require('node:fs'),crypto=require('node:crypto'); fs.writeFileSync('.site/version.json', JSON.stringify({sourceCommit:process.env.GITHUB_SHA,source:'https://github.com/'+process.env.GITHUB_REPOSITORY,sha256:crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex')},null,2)+'\n');"
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          path: .site
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publish verified artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

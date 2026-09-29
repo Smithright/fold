@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "Portable slides with editable source and optional depth below the fold.",
+  "repository": {"type": "git", "url": "https://github.com/Smithright/fold.git"},
+  "homepage": "https://smithright.github.io/fold/",
+  "bugs": {"url": "https://github.com/Smithright/fold/issues"},
   "scripts": {
     "build": "node build.mjs",
     "test": "node tests/model.test.mjs && node tests/browser.test.mjs"

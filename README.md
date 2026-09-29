@@ -4,11 +4,11 @@
 
 One clear screen, with optional depth below it. Fold is an editable, portable HTML presentation template with seven original design examples. Open `index.html` directly; presenting and editing require no installation, account, server, or network connection.
 
-[Open the live example](https://smithright.github.io/smithright-tools/presentation-template/) · [Authoring contract](AUTHORING.md)
+[Open the live example](https://smithright.github.io/fold/) · [Use this template](https://github.com/Smithright/fold/generate) · [Authoring contract](AUTHORING.md)
 
 ## Try it
 
-1. Download this folder, then open **index.html** in a modern browser.
+1. Download this repository, or choose **Use this template** to create your own copy. Open **index.html** in a modern browser.
 2. Use the arrow buttons or **← / →** to navigate. **Overview** shows the whole deck. Stable links such as `#living-system` survive reordering.
 3. Choose **Read** for a continuous document, or **Explore the details** below a slide. **Present** enters browser fullscreen.
 4. Choose **Edit**, change a headline, and select **Apply changes**. Drag a slide in the sidebar or use its **↑ / ↓** buttons. Undo and redo are available.
@@ -75,11 +75,13 @@ The generated `index.html` is checked in so opening the template works immediate
 
 The output is a static HTML file. It works at a repository subpath without a router, base-path configuration, CDN, or build service.
 
-For a copied repository, select **Settings → Pages → Deploy from a branch**, choose the branch containing `presentation-template/index.html`, and choose **/ (root)**. The deck will be at `https://<owner>.github.io/<repository>/presentation-template/`. Add an empty `.nojekyll` file at the publishing root when serving a branch directly.
+For your copy, select **Settings → Pages → GitHub Actions**. Push a change to `main`, or run **Verify and publish Fold** from the Actions tab. The deck will be at `https://<owner>.github.io/<repository>/`.
 
-This repository also includes a scoped validation workflow. It rebuilds and checks the committed artifact, exercises browser editing and exports, and uploads test screenshots and PDFs. Publishing is a separate action from these checks.
+The workflow rebuilds and checks the committed HTML, runs the source and browser tests, and retains screenshots and PDFs. On `main`, successful checks unlock a separate Pages deployment job. Pull requests are tested but never deployed. The published artifact contains only `index.html`, `LICENSE`, `.nojekyll`, and a `version.json` receipt with the source commit and HTML SHA-256.
 
-The initial live example is served from `gh-pages`, containing only the generated presentation, its license, a version receipt, and a root redirect. Updating source in a pull request does not update that preview. After rebuilding and verification, update `gh-pages/presentation-template/index.html` to publish; keep its version receipt aligned with the source commit and SHA-256.
+For simple branch-based hosting instead, choose **Deploy from a branch → main → / (root)**. The checked-in HTML also works with any static host.
+
+Fold originated in [smithright-tools](https://github.com/Smithright/smithright-tools). Its extracted Git history is preserved here. The [original demo URL](https://smithright.github.io/smithright-tools/presentation-template/) redirects to the new home, preserving slide fragments.
 
 ## Source map
 
@@ -113,4 +115,4 @@ Environment overrides for an existing test runtime: `PLAYWRIGHT_MODULE`, `PDF_LI
 
 Version 0.1.0. Chromium desktop and mobile-sized rendering are verified; Safari, Firefox, touch dragging, and physical mobile devices need additional testing. The up/down reorder buttons provide a drag-free path. Very long headlines may need editorial adjustment; the model's length limits are not a guarantee that arbitrary text fits a specific composition. Adding new diagram topologies or artwork requires a renderer, not arbitrary executable markup in a deck.
 
-The new code and original example artwork in **this folder** are MIT licensed; see [LICENSE](LICENSE). Other repository folders retain their existing licensing. Reuse, remix, and publish your own decks with the license notice retained.
+The code and original example artwork are MIT licensed; see [LICENSE](LICENSE). Reuse, remix, and publish your own decks with the license notice retained.
